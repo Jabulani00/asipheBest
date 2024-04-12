@@ -11,10 +11,10 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="invoice-content">
   <ion-list>
     <ion-item *ngFor="let slip of slips">
-      <ion-card *ngFor="let item of slip.items">
+      <ion-card *ngFor="let item of slip.items" class="invoice-card">
         <ion-card-header class="card-header">
           <ion-card-title>{{ item.name }}</ion-card-title>
         </ion-card-header>

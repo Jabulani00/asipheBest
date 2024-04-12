@@ -140,7 +140,7 @@ export class AnalyticsPage implements OnInit {
           return totalQuantity;
         });
 
-        const lowQuantityThreshold = 10; // Set the low quantity threshold
+        const lowQuantityThreshold = 10; 
         const lowQuantityCategories = uniqueCategories.filter((category, index) => {
           return quantitiesByCategory[index] < lowQuantityThreshold;
         });
@@ -227,7 +227,7 @@ export class AnalyticsPage implements OnInit {
           return totalQuantity;
         });
 
-        const lowQuantityThreshold = 10; // Set the low quantity threshold
+        const lowQuantityThreshold = 10; 
         const lowQuantityCategories = uniqueCategories.filter((category, index) => {
           return quantitiesByCategory[index] < lowQuantityThreshold;
         });
@@ -381,7 +381,7 @@ export class AnalyticsPage implements OnInit {
               category: item.category,
               quantity: item.quantity,
               name: item.name,
-              barcode: item.barcode, // Include the barcode property
+              barcode: item.barcode, 
             })
           );
           const storeroomItems: InventoryItem[] = storeroomData.map(
@@ -389,7 +389,7 @@ export class AnalyticsPage implements OnInit {
               category: item.category,
               quantity: item.quantity,
               name: item.name,
-              barcode: item.barcode, // Include the barcode property
+              barcode: item.barcode, 
             })
           );
 
@@ -421,7 +421,7 @@ export class AnalyticsPage implements OnInit {
             ],
           },
           options: {
-            indexAxis: 'y', // Make the chart horizontal
+            indexAxis: 'y',
             scales: {
               x: {
                 beginAtZero: true,
