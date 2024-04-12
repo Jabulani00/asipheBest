@@ -85,7 +85,7 @@ export class AnalyticsPage implements OnInit {
       .subscribe((updateFrequencyData: UpdateFrequencyData[]) => {
         const ctx = document.getElementById('updateFrequencyChart') as HTMLCanvasElement;
         new Chart(ctx, {
-          type: 'bar',
+          type: 'line',
           data: {
             labels: updateFrequencyData.map((item) => item.productName),
             datasets: [
@@ -95,14 +95,20 @@ export class AnalyticsPage implements OnInit {
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
+                tension: 0.4, // Adjust the curve of the line
               },
             ],
           },
           options: {
-            indexAxis: 'y',
             scales: {
               x: {
-                beginAtZero: true,
+                ticks: {
+                  autoSkip: true, // Enable auto-skipping of x-axis labels for better readability
+                  maxRotation: 90, // Rotate x-axis labels if they are too long
+                },
+              },
+              y: {
+                beginAtZero: true, // Start y-axis from zero
               },
             },
           },
@@ -146,22 +152,41 @@ export class AnalyticsPage implements OnInit {
             labels: uniqueCategories,
             datasets: [
               {
-                label: 'Quantity',
-                data: quantitiesByCategory,
-                backgroundColor: (context) => {
-                  const index = context.dataIndex;
-                  const category = uniqueCategories[index];
-                  return lowQuantityCategories.includes(category)
-                    ? 'rgba(255, 99, 132, 0.2)' // Red color for low quantity
-                    : 'rgba(75, 192, 192, 0.2)'; // Default color
-                },
-                borderColor: (context) => {
-                  const index = context.dataIndex;
-                  const category = uniqueCategories[index];
-                  return lowQuantityCategories.includes(category)
-                    ? 'rgba(255, 99, 132, 1)' // Red color for low quantity
-                    : 'rgba(75, 192, 192, 1)'; // Default color
-                },
+                type: 'line',
+                label: 'Minimum',
+                data: uniqueCategories.map((category) => {
+                  const categoryItems = data.filter((item) => item.name === category);
+                  const quantities = categoryItems.map((item) => item.quantity);
+                  return Math.min(...quantities);
+                }),
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                fill: false,
+              },
+              {
+                type: 'line',
+                label: 'Maximum',
+                data: uniqueCategories.map((category) => {
+                  const categoryItems = data.filter((item) => item.name === category);
+                  const quantities = categoryItems.map((item) => item.quantity);
+                  return Math.max(...quantities);
+                }),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: false,
+              },
+              {
+                type: 'bar',
+                label: 'Mean',
+                data: uniqueCategories.map((category) => {
+                  const categoryItems = data.filter((item) => item.name === category);
+                  const quantities = categoryItems.map((item) => item.quantity);
+                  return quantities.reduce((acc, curr) => acc + curr, 0) / quantities.length;
+                }),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
               },
             ],
@@ -214,22 +239,41 @@ export class AnalyticsPage implements OnInit {
             labels: uniqueCategories,
             datasets: [
               {
-                label: 'Quantity',
-                data: quantitiesByCategory,
-                backgroundColor: (context) => {
-                  const index = context.dataIndex;
-                  const category = uniqueCategories[index];
-                  return lowQuantityCategories.includes(category)
-                    ? 'rgba(255, 99, 132, 0.2)' // Red color for low quantity
-                    : 'rgba(75, 192, 192, 0.2)'; // Default color
-                },
-                borderColor: (context) => {
-                  const index = context.dataIndex;
-                  const category = uniqueCategories[index];
-                  return lowQuantityCategories.includes(category)
-                    ? 'rgba(255, 99, 132, 1)' // Red color for low quantity
-                    : 'rgba(75, 192, 192, 1)'; // Default color
-                },
+                type: 'line',
+                label: 'Minimum',
+                data: uniqueCategories.map((category) => {
+                  const categoryItems = data.filter((item) => item.name === category);
+                  const quantities = categoryItems.map((item) => item.quantity);
+                  return Math.min(...quantities);
+                }),
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                fill: false,
+              },
+              {
+                type: 'line',
+                label: 'Maximum',
+                data: uniqueCategories.map((category) => {
+                  const categoryItems = data.filter((item) => item.name === category);
+                  const quantities = categoryItems.map((item) => item.quantity);
+                  return Math.max(...quantities);
+                }),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: false,
+              },
+              {
+                type: 'bar',
+                label: 'Mean',
+                data: uniqueCategories.map((category) => {
+                  const categoryItems = data.filter((item) => item.name === category);
+                  const quantities = categoryItems.map((item) => item.quantity);
+                  return quantities.reduce((acc, curr) => acc + curr, 0) / quantities.length;
+                }),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
               },
             ],
@@ -288,28 +332,40 @@ export class AnalyticsPage implements OnInit {
       )
       .subscribe((comparisonData: CategoryComparisonData[]) => {
         const ctx = document.getElementById('categoryComparisonChart') as HTMLCanvasElement;
-        new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: comparisonData.map((item) => item.category),
-            datasets: [
-              {
-                label: 'Inventory',
-                data: comparisonData.map((item) => item.inventoryQuantity),
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-              },
-              {
-                label: 'Storeroom',
-                data: comparisonData.map((item) => item.storeroomQuantity),
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
-              },
-            ],
-          },
-        });
+       new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: comparisonData.map((item) => item.category),
+    datasets: [
+      {
+        label: 'Inventory',
+        data: comparisonData.map((item) => item.inventoryQuantity),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      },
+      {
+        label: 'Storeroom',
+        data: comparisonData.map((item) => item.storeroomQuantity),
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
+  },
+  options: {
+    indexAxis: 'y',
+    scales: {
+      x: {
+        stacked: true,
+        beginAtZero: true,
+      },
+      y: {
+        stacked: true,
+      },
+    },
+  },
+});
       });
   }
 
@@ -351,31 +407,26 @@ export class AnalyticsPage implements OnInit {
       .subscribe((totalQuantities: TotalQuantitiesData[]) => {
         const ctx = document.getElementById('totalQuantitiesChart') as HTMLCanvasElement;
         new Chart(ctx, {
-          type: 'pie',
+          type: 'bar',
           data: {
             labels: totalQuantities.map((item) => item.category),
             datasets: [
               {
+                label: 'Total Quantity',
                 data: totalQuantities.map((item) => item.totalQuantity),
-                backgroundColor: [
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)',
-                  'rgba(153, 102, 255, 0.2)',
-                  'rgba(255, 159, 64, 0.2)',
-                ],
-                borderColor: [
-                  'rgba(255, 99, 132, 1)',
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
-                  'rgba(255, 159, 64, 1)',
-                ],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
               },
             ],
+          },
+          options: {
+            indexAxis: 'y', // Make the chart horizontal
+            scales: {
+              x: {
+                beginAtZero: true,
+              },
+            },
           },
         });
       });
