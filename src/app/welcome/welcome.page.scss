@@ -10,7 +10,11 @@ ion-content {
     height: 100vh;
     color: white;
   
+
+    
     .header {
+      position: absolute;
+      bottom: 200px;
       text-align: center;
       animation: fadeIn 2s ease-in-out;
     }

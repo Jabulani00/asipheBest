@@ -1,54 +1,53 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Best Brightness Dashboard
+     Welcome Best Brightness 
     </ion-title>
     <ion-icon slot="end" name="power-outline" (click)="presentConfirmationAlert()"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" style="--background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('assets/v.jpg') no-repeat center / cover; height: 100vh; display: flex; align-items: center; justify-content: center;">
-  <ion-segment value="custom">
-    <ion-segment-button value="custom">
-      <ion-label>Menu</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="segment" (click)="navigateToStoreInventory()">
-      <ion-label>Store </ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="storeroom" (click)="navigateToViewStoreRoom()">
-      <ion-label>StoreRoom</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+<ion-content >
 
-  <div class="grid-container">
-    <ion-card (click)="navigateToAddInventory()" class="menu-card self-improvement">
-      <ion-img src="assets/add.jpg"></ion-img>
-      <ion-card-header>
+  <ion-tabs>
+    <ion-tab-bar slot="top">
+      <ion-tab-button (click)="navigateToAddInventory()" tab="home">
+        <ion-icon name="add-circle-outline"></ion-icon>
         Add Inventory
-      </ion-card-header>
-    </ion-card>
+      </ion-tab-button>
 
-    <ion-card (click)="navigateToUpdateInventory()" class="menu-card business-ideas">
-      <ion-img src="assets/update.jpg"></ion-img>
-      <ion-card-header>
+      <ion-tab-button (click)="navigateToUpdateInventory()" tab="radio">
+        <ion-icon name="repeat-outline"></ion-icon>
         Update Inventory
-      </ion-card-header>
-    </ion-card>
+      </ion-tab-button>
 
-    <ion-card (click)="navigateToPickupInventory()" class="menu-card business-ideas">
-      <ion-img src="assets/pick.jpg"></ion-img>
-      <ion-card-header>
-       Add Inventory Storeroom
-      </ion-card-header>
-    </ion-card>
+      <ion-tab-button (click)="navigateToPickupInventory()" tab="library">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Add Inventory Storeroom
+      </ion-tab-button>
 
-    <ion-card (click)="navigateToDeliverInventory()" class="menu-card business-ideas">
-      <ion-img src="assets/del.jpg"></ion-img>
-      <ion-card-header>
+      <ion-tab-button (click)="navigateToDeliverInventory()" tab="search">
+        <ion-icon name="stats-chart-outline"></ion-icon>
         Analytics
-      </ion-card-header>
-    </ion-card>
+      </ion-tab-button>
 
-    
+      <ion-tab-button (click)="navigateToStoreInventory()" tab="search">
+        <ion-icon name="eye-outline"></ion-icon>
+        Store
+      </ion-tab-button>
+
+      <ion-tab-button (click)="navigateToViewStoreRoom()" tab="search">
+        <ion-icon name="eye-outline"></ion-icon>
+        StoreRoom
+      </ion-tab-button>
+
+    </ion-tab-bar>
+  </ion-tabs>
+
+  <div class="header">
+    <div>
+
+    <ion-img src="assets/bb.png" style="width: 50%; height: auto; display: block; margin: 0 auto;"></ion-img>
+  </div>
   </div>
 </ion-content>
