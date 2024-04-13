@@ -48,6 +48,7 @@ export class HomePage {
 
       let authorized = false;
       let message = '';
+      
 
       if (this.userDocument && this.userDocument.role) {
         console.log('User Role:', this.userDocument.role); // Log user role
@@ -81,7 +82,7 @@ export class HomePage {
         }
     } else {
         authorized = false;
-        message = 'User document or role not found.';
+        message = 'contact Admin';
     }
     
 

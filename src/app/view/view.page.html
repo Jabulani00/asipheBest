@@ -86,13 +86,13 @@
 
   <ion-row class="ion-no-padding">
     <ion-col>
-      <ion-button (click)="goToUpdate(item.name,item.category,item.description,item.quantity,item.barcode,item.pickersDetails,item.dateOfPickup,item.timeOfPickup ,item.imageUrl )" color="primary" expand="block">
+      <ion-button (click)="goToUpdate(item.name,item.category,item.description,item.quantity,item.barcode,item.pickersDetails,item.dateOfPickup,item.timeOfPickup ,item.imageUrl )" class="update" expand="block">
         <ion-icon name="create-outline"></ion-icon>
         Update
       </ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="openModal(item.imageUrl, item.name)" color="secondary" expand="block">
+      <ion-button (click)="openModal(item.imageUrl, item.name)" class="view" expand="block">
         <ion-icon name="eye-outline"></ion-icon>
         View
       </ion-button>

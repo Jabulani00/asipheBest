@@ -27,6 +27,12 @@ ion-content {
     color: #fff;
     animation: pulse 2s infinite;
   }
+  .view{
+    --background: #664cdd;
+  }
+  .update{
+    --background: #575463;
+  }
   
   .animated-content {
     background-color: #f5f5f5;
