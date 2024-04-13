@@ -31,3 +31,18 @@ body.scanner-active {
     --ion-background-color: transparent;
   }
 
+  ion-header {
+    ion-toolbar{
+      --background: #A393EB; 
+      color: white;
+      font-style: oblique;
+      font-weight: bolder;
+      font-size: 25px;
+    }
+    --background: #A393EB; 
+    
+  }
+  ion-content{
+    font-style: oblique;
+  }
+

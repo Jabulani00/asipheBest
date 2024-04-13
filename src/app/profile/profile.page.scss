@@ -47,7 +47,8 @@ ion-content {
   
     p {
       margin: 0;
-      font-size: 16px;
+      font-size: 27px;
+    font-weight: bold;
     }
   
     .professional-status {
@@ -79,4 +80,24 @@ ion-content {
       color:#fff;
     }
   }
+  .note-container {
+    display: flex;
+    align-items: center;
+    background-color: #fffde7;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 20px;
+  }
   
+  .note-icon {
+    color: #ffc107;
+    font-size: 30px;
+    margin-right: 10px;
+  }
+  
+  .note-text {
+    color: #856404;
+    font-size: 18px;
+    line-height: 1.4;
+  }

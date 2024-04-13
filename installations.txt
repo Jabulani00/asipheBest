@@ -3,3 +3,8 @@
 3. npm install @ionic/pwa-elements
 4. npm install chart.js
 5. npm install pdfmake
+
+
+Admin credentials
+emai: manager@brightness.com
+password: best@B0101W2

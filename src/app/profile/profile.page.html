@@ -1,40 +1,28 @@
 <ion-header>
-  <ion-toolbar >
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button routerLink="/login"></ion-back-button>
     </ion-buttons>
     <ion-title class="ion-text-center">My Profile</ion-title>
   </ion-toolbar>
-  
 </ion-header>
 
 <ion-content>
   <ion-card class="profile-card">
-    <ion-card-header>
-      <ion-icon name="person-circle" class="header-icon"></ion-icon>
-      <ion-card-title>Profile</ion-card-title>
-    </ion-card-header>
+    
     <ng-container *ngIf="user$ | async as user; else loading">
       <ion-card-content>
         <div class="profile-item">
-          <ion-icon name="person" class="item-icon"></ion-icon>
-          <p>Name :{{ user.name }}</p>
+          <p>{{ user.name }}</p>
         </div>
-        <div class="profile-item">
-          <ion-icon name="mail" class="item-icon"></ion-icon>
-          <p>Email :{{ user.email }}</p>
-        </div>
-        <div class="profile-item">
-          <ion-icon name="briefcase" class="item-icon"></ion-icon>
-          <p>Role :{{ user.role }}</p>
-        </div>
-        <div class="profile-item">
-          <ion-icon name="flag" class="item-icon"></ion-icon>
-          <p class="professional-status">Status: {{ user.status }}</p>
-        </div>
-        <div class="profile-item">
+        
+        <div class="note-container"><p><ion-icon name="warning" class="note-icon"></ion-icon></p>
           
-          <p class="professional-status">Please note: We require administrator approval for system access to ensure security. Your patience is appreciated. We'll notify you once access is granted. </p>
+          <p class="note-text">
+            Please note: We require administrator approval for system access to
+            ensure security. Your patience is appreciated. We'll notify you once
+            access is granted.
+          </p>
         </div>
       </ion-card-content>
     </ng-container>

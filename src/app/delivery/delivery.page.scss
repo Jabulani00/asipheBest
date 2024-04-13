@@ -53,14 +53,18 @@
   }
 }
 ion-header {
-  ion-toolbar {
+  ion-toolbar{
     --background: #A393EB; 
-    color:#fff;
-    text-align: center;
+    color: white;
+    font-style: oblique;
+    font-weight: bolder;
+    font-size: 25px;
   }
+  --background: #A393EB; 
+  
 }
 
 ion-segment-button{
-  font-size: 27px;
+  font-size: 20px;
     font-weight: bold;
 }
