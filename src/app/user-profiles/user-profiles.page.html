@@ -5,14 +5,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-segment value="custom">
-    <ion-segment-button value="custom">
-      <ion-label>UserProfiles</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="segment" routerLink="/analytics">
-      <ion-label>Analytics </ion-label>
-    </ion-segment-button>
-  </ion-segment>
+  
 
   <ion-list>
     <ion-item *ngFor="let user of users | async" class="user-item animate__animated animate__fadeInUp">

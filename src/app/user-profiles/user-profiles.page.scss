@@ -1,96 +1,84 @@
-/* General Styles */
+/* General styles */
 ion-content {
-    --background: linear-gradient(135deg, #A393EB);
+  --background: #f2f2f2;
+}
+
+ion-header {
+  ion-toolbar {
+    --background: #A393EB; 
+    color:#fff;
   }
-  
+}
+
+
+ion-list {
+  background-color: transparent;
+}
+
+ion-item {
+  --background: #fff;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+ion-avatar {
+  --border-radius: 50%;
+  width: 48px;
+  height: 48px;
+}
+
+ion-icon {
+  font-size: 24px;
+}
+
+.active {
+  color: #16a085;
+}
+
+.denied {
+  color: #e74c3c;
+}
+
+.pending {
+  color: #f39c12;
+}
+
+/* Responsive styles */
+@media (max-width: 576px) {
+  ion-segment-button {
+    font-size: 12px;
+  }
+
   ion-item {
-    --background: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-  
-    &:hover {
-      transform: translateY(-5px);
-    }
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --inner-padding-end: 4px;
   }
-  
+
   ion-avatar {
-    --border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    ion-icon {
-      font-size: 32px;
-      color: #A393EB;
-    }
+    width: 36px;
+    height: 36px;
   }
-  
-  ion-label {
-    h2 {
-      font-weight: bold;
-      color: #A393EB;
-      text-transform: uppercase;
-    }
-  
-    p {
-      color: #666;
-    }
-    .pending{
-        color:rgb(255, 145, 0);
-    }
-  
-    .active {
-      color: green;
-    }
-  
-    .denied {
-      color: red;
-    }
+
+  ion-icon {
+    font-size: 20px;
   }
-  
-  
+
+  ion-label h2 {
+    font-size: 16px;
+  }
+
+  ion-label p {
+    font-size: 12px;
+  }
+
   ion-button {
-    --border-radius: 20px;
-    --box-shadow: none;
-    transition: transform 0.3s ease;
-  
-    &:hover {
-      transform: scale(1.05);
-    }
+    font-size: 12px;
+    --padding-start: 8px;
+    --padding-end: 8px;
   }
-  
-  /* Media Query for Mobile Devices */
-  @media only screen and (max-width: 768px) {
-    ion-avatar {
-      width: 40px;
-      height: 40px;
-  
-      ion-icon {
-        font-size: 20px;
-      }
-    }
-  
-    ion-label h2 {
-      font-size: 14px;
-    }
-  
-    ion-label p {
-      font-size: 12px;
-    }
-  }
-  ion-header {
-    ion-toolbar {
-      --background: #A393EB; 
-      color:#fff;
-      text-align: center;
-    }
-  }
-  ion-segment {
-    --background: #cA393EB24d2c;
-    font-weight: bold;
-  }
+}

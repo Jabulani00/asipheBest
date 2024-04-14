@@ -225,7 +225,7 @@ const docDefinition = {
           bold: true,
           margin: [0, 0, 0, 10],
           alignment: 'center',
-          color: '#007bff' // Blue color for the header
+          color: '#A393EB' // Blue color for the header
       },
       subheader: {
           fontSize: 14,
@@ -243,7 +243,7 @@ const docDefinition = {
           bold: true,
           margin: [0, 0, 0, 20], // Adjust margin to separate company name from header
           alignment: 'center',
-          color: '#dc3545' // Red color for the company name
+          color: '#A393EB' // Red color for the company name
       }
   }
 };

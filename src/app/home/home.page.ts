@@ -56,24 +56,24 @@ export class HomePage {
         switch (page) {
             case 'add-inventory-storeroom':
                 authorized = this.userDocument.role === 'picker' || this.userDocument.role === 'Manager';
-                message = authorized ? 'Authorized user for picker page.' : 'Unauthorized user for picker page.';
+                message = authorized ? 'Authorized user for picking storeroom inventory' : 'Unauthorized user for picking storeroom inventory';
                 break;
             case 'analytics':
                 authorized = this.userDocument.role === 'Delivery' || this.userDocument.role === 'Manager';
-                message = authorized ? 'Authorized user for delivery page.' : 'Unauthorized user for delivery page.';
+                message = authorized ? 'Authorized user for Analytics ' : 'Unauthorized user for Analytics';
                 break;
             case 'add-inventory':
             case 'view':
                 authorized = this.userDocument.role === 'Manager';
-                message = authorized ? 'Authorized user for this page.' : 'Access denied for this page.';
+                message = authorized ? 'Authorized user for adding inventory to store' : 'Access denied for adding inventory to store';
                 break;
                 case 'storeroom':
                   authorized = this.userDocument.role === 'Manager';
-                  message = authorized ? 'Authorized user for this page.' : 'Access denied for this page.';
+                  message = authorized ? 'Authorized user for viewing storeroom inventory' : 'Access denied for viewing storeroom inventory';
                   break;
                 case 'view':
                 authorized = this.userDocument.role === 'Manager';
-                message = authorized ? 'Authorized user for this page.' : 'Access denied for this page.';
+                message = authorized ? 'Authorized user for viewing store inventory' : 'Access denied for viewing store inventory';
                 break;
             default:
                 authorized = false;

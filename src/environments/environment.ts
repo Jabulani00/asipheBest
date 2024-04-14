@@ -5,12 +5,12 @@
 export const environment = {
   production: false,  // Add this line
   firebaseConfig :{
-    apiKey: "AIzaSyBDFVHuFICM8r-1-_894Sat_JSocQ-NI90",
-  authDomain: "best-a61c4.firebaseapp.com",
-  projectId: "best-a61c4",
-  storageBucket: "best-a61c4.appspot.com",
-  messagingSenderId: "754162332323",
-  appId: "1:754162332323:web:b1edb8cbcd571b3a9a4516"
+    apiKey: "AIzaSyCHMmzQeDvzdzM4mmYmuvDZWXytI3efc9Y",
+    authDomain: "bestbrigtness.firebaseapp.com",
+    projectId: "bestbrigtness",
+    storageBucket: "bestbrigtness.appspot.com",
+    messagingSenderId: "299066720092",
+    appId: "1:299066720092:web:3cad8bf5bf72f689744b99"
   }
 };
 
