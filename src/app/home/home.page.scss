@@ -1,37 +1,80 @@
+/* General Styles */
+ion-content {
+  --background: #A393EB;
+  --color: #fff;
+}
 
-   
+/* Logo Container */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
 
-  ion-header {
-    ion-toolbar {
-      --background: #A393EB; 
-      color:#fff;
-      text-align: center;
-    }
+ion-img {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+/* Menu Cards */
+ion-card {
+  --background: rgba(255, 255, 255, 0.1);
+  --color: #fff;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 150px; /* Added fixed width */
+  height: 150px; /* Added fixed height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+ion-card:hover {
+  transform: scale(1.05);
+}
+
+ion-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+ion-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color:#fff;
+}
+
+ion-icon {
+  font-size: 32px;
+  color:#fff;
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+  ion-grid {
+    max-width: 800px;
+    margin: 0 auto;
   }
 
-  ion-icon{
-    font-size: 25px;
-    font-weight: bolder;
-    color: #A393EB;
-  }
-  .logout{
-    font-size: 25px;
-    font-weight: bolder;
-    color: #fff;
+  ion-card {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  ion-content {
-    --background: #A393EB; /* Set your desired background color */
-  }
-  .header {
-    text-align: center;
-    animation: fadeIn 2s ease-in-out;
-    position: absolute;
-    height: 100vh;
-    width: 100%;
-    top:30%;
-    right: 0%;
-    transition: transform(-50%,-50%);
+  ion-card-header {
+    flex-direction: row;
   }
 
- 
+  ion-card-title {
+    font-size: 20px;
+    margin-right: 20px;
+  }
+}

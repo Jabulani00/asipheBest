@@ -1,53 +1,75 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
-     Welcome Best Brightness 
-    </ion-title>
-    <ion-icon slot="end" class="logout" name="power-outline" (click)="presentConfirmationAlert()"></ion-icon>
+    <ion-title>Welcome Best Brightness</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentConfirmationAlert()">
+        <ion-icon name="power-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content >
-
-  <ion-tabs>
-    <ion-tab-bar slot="top">
-      <ion-tab-button (click)="navigateToAddInventory()" tab="home">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        Add Inventory
-      </ion-tab-button>
-
-      <ion-tab-button (click)="navigateToUpdateInventory()" tab="radio">
-        <ion-icon name="repeat-outline"></ion-icon>
-        Update Inventory
-      </ion-tab-button>
-
-      <ion-tab-button (click)="navigateToPickupInventory()" tab="library">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        Add Inventory Storeroom
-      </ion-tab-button>
-
-      <ion-tab-button (click)="navigateToDeliverInventory()" tab="search">
-        <ion-icon name="stats-chart-outline"></ion-icon>
-        Analytics
-      </ion-tab-button>
-
-      <ion-tab-button (click)="navigateToStoreInventory()" tab="search">
-        <ion-icon name="eye-outline"></ion-icon>
-        Store
-      </ion-tab-button>
-
-      <ion-tab-button (click)="navigateToViewStoreRoom()" tab="search">
-        <ion-icon name="eye-outline"></ion-icon>
-        StoreRoom
-      </ion-tab-button>
-
-    </ion-tab-bar>
-  </ion-tabs>
-
-  <div class="header">
-    <div>
-
-    <ion-img src="assets/bb.png" style="width: 50%; height: auto; display: block; margin: 0 auto;"></ion-img>
+<ion-content>
+  <div class="logo-container">
+    <ion-img src="assets/bb.png"></ion-img>
   </div>
-  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" (click)="navigateToAddInventory()">
+        <ion-card class="menu-card">
+          <ion-card-header>
+            <ion-card-title>Add Inventory</ion-card-title>
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" (click)="navigateToUpdateInventory()">
+        <ion-card class="menu-card">
+          <ion-card-header>
+            <ion-card-title>Update Inventory</ion-card-title>
+            <ion-icon name="repeat-outline"></ion-icon>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" (click)="navigateToPickupInventory()">
+        <ion-card class="menu-card">
+          <ion-card-header>
+            <ion-card-title>Add Inventory Storeroom</ion-card-title>
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" (click)="navigateToDeliverInventory()">
+        <ion-card class="menu-card">
+          <ion-card-header>
+            <ion-card-title>Analytics</ion-card-title>
+            <ion-icon name="stats-chart-outline"></ion-icon>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" (click)="navigateToStoreInventory()">
+        <ion-card class="menu-card">
+          <ion-card-header>
+            <ion-card-title>Store</ion-card-title>
+            <ion-icon name="eye-outline"></ion-icon>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" (click)="navigateToViewStoreRoom()">
+        <ion-card class="menu-card">
+          <ion-card-header>
+            <ion-card-title>Storeroom</ion-card-title>
+            <ion-icon name="eye-outline"></ion-icon>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
