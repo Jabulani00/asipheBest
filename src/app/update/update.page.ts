@@ -1,12 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { finalize } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
-import { LoadingController, NavController, ToastController } from '@ionic/angular';
-
+import { LoadingController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-update',
@@ -14,34 +12,56 @@ import { LoadingController, NavController, ToastController } from '@ionic/angula
   styleUrls: ['./update.page.scss'],
 })
 export class UpdatePage implements OnInit {
-  barcode!: string; // Variable to hold the ID of the inventory item
-  itemName: string = '';
-  itemCategory: string = '';
-  itemDescription: string = '';
-  itemQuantity: number = 0;
+  barcode = '';
+  itemName = '';
+  itemCategory = '';
+  itemDescription = '';
+  itemQuantity = 0;
   selectedFile: File | null = null;
-  productInfor: any;
+  productInfo: any;
   imageBase64: any;
-  toggleChecked: boolean = false;
+  toggleChecked = false;
   imageUrl: any;
-  imageInfor:any;
-  newImage :any;
+  newImage: any;
 
   constructor(
-    private route: ActivatedRoute,
+    private renderer: Renderer2,
     private router: Router,
     private firestore: AngularFirestore,
-    private fireStorage: AngularFireStorage
-  ) {
-    
-  }
+    private fireStorage: AngularFireStorage,
+    private loadingController: LoadingController,
+    private toastController: ToastController
+  ) {}
 
   ngOnInit() {
     this.getPassedData();
-    console.log(this.imageUrl+ "1") ;
+  }
+
+  hideCard() {
+    const cardElement = document.getElementById('container');
+    if (cardElement) {
+      this.renderer.setStyle(cardElement, 'display', 'none'); // Use Renderer2's setStyle()
+    }
+  }
+showCard() {
+    const cardElement = document.getElementById('container');
+    if (cardElement) {
+      this.renderer.setStyle(cardElement, 'display', 'contents'); // Use Renderer2's setStyle()
+    }
+  }
+  async closeScanner(){
+    this.showCard();
+    const result = await BarcodeScanner.stopScan(); // start scanning and wait for a result
+    // if the result has content
+  
+    window.document.querySelector('ion-app')?.classList.remove('cameraView');
+    document.querySelector('body')?.classList.remove('scanner-active');
   }
 
   async scanBarcode() {
+    this.hideCard();
+   
+    window.document.querySelector('ion-app')?.classList.add('cameraView');
     document.querySelector('body')?.classList.add('scanner-active');
     await BarcodeScanner.checkPermission({ force: true });
     // make background of WebView transparent
@@ -52,6 +72,9 @@ export class UpdatePage implements OnInit {
     if (result.hasContent) {
       this.barcode = result.content;
       console.log(result.content); // log the raw scanned content
+      this.showCard()
+      window.document.querySelector('ion-app')?.classList.remove('cameraView');
+      document.querySelector('body')?.classList.remove('scanner-active');
     }
   }
 
@@ -65,52 +88,67 @@ export class UpdatePage implements OnInit {
       }
     }
   }
+
   async updateItem() {
+    const loader = await this.loadingController.create({
+      message: 'Updating item...',
+    });
+    await loader.present();
 
+    if (this.imageBase64) {
+      await this.deleteFileIfExists(this.productInfo.imageUrl);
+      this.imageUrl = await this.uploadImage(this.imageBase64);
+    }
 
-if(this.imageBase64){
-  await this.deleteFileIfExists.call(this, this.productInfor.imageUrl);
-  this.imageUrl = await this.uploadImage(this.imageBase64);
-}
+    try {
+      const existingItemQueryStore = await this.firestore
+        .collection('inventory')
+        .ref.where('barcode', '==', this.barcode)
+        .get();
 
-
-   
-    // Check if there's an existing item with the same name in the inventory collection
-    const existingItemQueryStore = await this.firestore
-      .collection('inventory')
-      .ref.where('barcode', '==', this.barcode)
-      .get();
-    if (!existingItemQueryStore.empty) {
-      // Update the quantity of the existing item in the storeroomInventory collection
-      const existingItemDoc = existingItemQueryStore.docs[0];
-      const existingItemData: any = existingItemDoc.data();
-      await existingItemDoc.ref.update({
-        name: this.itemName,
-        category: this.itemCategory,
-        description: this.itemDescription,
-        barcode:this.barcode,
-        quantity: this.itemQuantity,
-        timestamp: new Date(), 
-        imageUrl: this.imageUrl
-      
-        // Add timestamp });
-        //console.log("Storeroom Inventory Updated (Plused)");
-      });
+      if (!existingItemQueryStore.empty) {
+        const existingItemDoc = existingItemQueryStore.docs[0];
+        const existingItemData: any = existingItemDoc.data();
+        await existingItemDoc.ref.update({
+          name: this.itemName,
+          category: this.itemCategory,
+          description: this.itemDescription,
+          barcode: this.barcode,
+          quantity: this.itemQuantity,
+          timestamp: new Date(),
+          imageUrl: this.imageUrl || existingItemData.imageUrl,
+        });
+        this.presentToast('Item updated successfully', 'success');
+        this.clearFields(); // Clear fields after successful update
+      } else {
+        this.presentToast('Item not found', 'danger');
+      }
+    } catch (error: any) {
+      this.presentToast('Error updating item: ' + error.message, 'danger');
+    } finally {
+      loader.dismiss();
     }
   }
 
-  toggleMode() {
-    if (this.toggleChecked) {
-      this.barcode = ''; // Clear the barcode value when switching to input mode
-    }
-  }
+  // ... (other methods remain the same) ...
+
   clearFields() {
     this.itemName = '';
     this.itemCategory = '';
     this.itemDescription = '';
     this.itemQuantity = 0;
     this.selectedFile = null;
+    this.imageBase64 = null;
+    this.newImage = null;
   }
+
+  toggleMode() {
+    if (this.toggleChecked) {
+      this.barcode = '';
+    }
+  }
+
+ 
 
   onFileSelected(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -143,15 +181,23 @@ if(this.imageBase64){
 
   async getPassedData() {
     if (this.router.getCurrentNavigation()?.extras.state) {
-      this.productInfor = await this.router.getCurrentNavigation()?.extras.state;
-      console.log(this.productInfor);
-      this.barcode = this.productInfor.barcode; // Variable to hold the ID of the inventory item
-      this.itemName = this.productInfor.name;
-      this.itemCategory = this.productInfor.category;
-      this.itemDescription = this.productInfor.description;
-      this.itemQuantity = this.productInfor.quantity;
-      this.newImage = this.productInfor.imageUrl;
-    
+      this.productInfo = await this.router.getCurrentNavigation()?.extras.state;
+      this.barcode = this.productInfo.barcode;
+      this.itemName = this.productInfo.name;
+      this.itemCategory = this.productInfo.category;
+      this.itemDescription = this.productInfo.description;
+      this.itemQuantity = this.productInfo.quantity;
+      this.newImage = this.productInfo.imageUrl;
     }
+  }
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'top',
+    });
+    toast.present();
   }
 }

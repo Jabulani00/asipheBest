@@ -1,12 +1,17 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title >Add Inventory Store</ion-title>
-    <ion-icon style="font-size: 30px; font-weight: bolder;"  routerLink="/home" slot="end" name="arrow-back-outline"></ion-icon>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeScanner()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-icon style="font-size: 30px; font-weight: bolder;"  routerLink="/home" slot="start" name="arrow-back-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" style="--background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('assets/v.jpg') no-repeat center / cover; height: 100vh; display: flex; align-items: center; justify-content: center;">
-  <ion-card>
+  <ion-card id="container">
     <ion-card-header>
       Add Inventory Item
     </ion-card-header>
@@ -22,7 +27,7 @@
 
       <ion-item>
         <ion-label position="floating">Barcode</ion-label>
-        <ion-input type="text" [(ngModel)]="barcode" *ngIf="toggleChecked"></ion-input>
+        <ion-input type="text" [(ngModel)]="barcode" (ionChange)="searchProductByBarcode()" *ngIf="toggleChecked"></ion-input>
         <ion-button  expand="block" (click)="scanBarcode()" *ngIf="!toggleChecked">
           <ion-icon name="barcode-outline"></ion-icon> Scan
         </ion-button>

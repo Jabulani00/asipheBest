@@ -46,3 +46,27 @@ body.scanner-active {
     font-style: oblique;
   }
 
+  body.scanner-active {
+    --background: transparent !important;
+    --ion-background-color: transparent !important;
+    background: transparent none !important;
+    --background: transparent none !important;
+    --ion-background-color: none;
+  }
+
+  ion-content{
+    --background: linear-gradient(180deg, rgb(215, 220, 224) 0%, rgba(255, 255, 255, 1) 100%);
+  }
+  .container{
+    background: linear-gradient(180deg, rgb(215, 220, 224) 0%, rgba(255, 255, 255, 1) 100%);
+  } .custom-scan-button {
+    width: 100%;
+  }
+  ion-app.cameraView,
+ion-app.cameraView ion-content,
+ion-app.cameraView .nav-decor,
+ion-app.cameraView ion-page {
+  background: transparent none !important;
+  --background: transparent none !important;
+  --ion-background-color: none;
+}

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Router } from '@angular/router'; // Import Router
-import { LoadingController, NavController, ToastController, AlertController } from '@ionic/angular';
-import { ProfilePage } from '../profile/profile.page';
+import { Router } from '@angular/router';
+import { LoadingController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-sign-up',
@@ -15,79 +14,89 @@ export class SignUpPage implements OnInit {
   email: any;
   password: any;
   confirm_password: any;
-  selectedRole:any;
+  selectedRole: any;
 
   constructor(
     private db: AngularFirestore,
     private Auth: AngularFireAuth,
-    private router: Router // Inject Router
-    ,private loadingController: LoadingController
-  ) { }
+    private router: Router,
+    private loadingController: LoadingController,
+    private toastController: ToastController
+  ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  async presentToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 3000,
+      color: color,
+      position: 'top',
+    });
+    toast.present();
   }
 
   async Register() {
-    if (this.name =='') 
-      {
-        alert("Enter your full name")
-        return;
-      }
-
-    if (this.email =='') 
-      {
-        alert("Enter email Address")
-        return;
-      }
-      if (this.password =='') 
-      {
-        alert("Enter password")
-        return;
-      }  
-  
-    if (this.password !== this.confirm_password) {
-      console.error('Passwords do not match');
+    if (this.name == '') {
+      this.presentToast('Please enter your full name', 'danger');
       return;
     }
+
+    if (this.email == '') {
+      this.presentToast('Please enter your email address', 'danger');
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(this.email)) {
+      this.presentToast('Please enter a valid email address', 'danger');
+      return;
+    }
+
+    if (this.password == '') {
+      this.presentToast('Please enter a password', 'danger');
+      return;
+    }
+
+    if (this.password !== this.confirm_password) {
+      this.presentToast('Passwords do not match', 'danger');
+      return;
+    }
+
     const loader = await this.loadingController.create({
-      message: '|Registering you...',
+      message: 'Registering you...',
       cssClass: 'custom-loader-class'
     });
-   
-     
     await loader.present();
+
     this.Auth.createUserWithEmailAndPassword(this.email, this.password)
-      .then((userCredential: any) => { // Explicitly specify type
+      .then((userCredential: any) => {
         if (userCredential.user) {
-          this.db.collection('Users').add(
-            {
-              name:this.name,
+          this.db
+            .collection('Users')
+            .add({
+              name: this.name,
               email: this.email,
               status: "pending",
-              role : this.selectedRole,
-            }
-          )
+              role: this.selectedRole,
+            })
             .then(() => {
               loader.dismiss();
-
-
-              console.log('User data added successfully');
+              this.presentToast('User data added successfully', 'success');
               this.router.navigate(['/profile']);
             })
-            
-            .catch((error: any) => { // Explicitly specify type
+            .catch((error: any) => {
               loader.dismiss();
-
-              console.error('Error adding user data:', error);
+              this.presentToast('Error adding user data: ' + error.message, 'danger');
             });
         } else {
-          console.error('User credential is missing');
+          loader.dismiss();
+          this.presentToast('User credential is missing', 'danger');
         }
       })
-      .catch((error: any) => { // Explicitly specify type
-        console.error('Error creating user:', error);
+      .catch((error: any) => {
+        loader.dismiss();
+        this.presentToast('Error creating user: ' + error.message, 'danger');
       });
   }
-  
-  
 }

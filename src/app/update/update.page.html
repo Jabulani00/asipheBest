@@ -1,12 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Update Inventory</ion-title>
-    <ion-icon style="font-size: 30px; font-weight: bolder;"  routerLink="/view" slot="end" name="arrow-back-outline"></ion-icon>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeScanner()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-icon style="font-size: 30px; font-weight: bolder;"  routerLink="/view" slot="start" name="arrow-back-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid>
+  <ion-grid id="container">
     <ion-item>
       <ion-toggle labelPlacement="end" [(ngModel)]="toggleChecked">Type barcode</ion-toggle>
     </ion-item>

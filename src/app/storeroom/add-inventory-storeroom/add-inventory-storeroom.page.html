@@ -1,12 +1,17 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title class="animated fadeInDown">Add Inventory Storeroom</ion-title>
-    <ion-icon style="font-size: 30px; font-weight: bolder;" routerLink="/home" slot="end" name="arrow-back-outline" class="animated fadeInRight"></ion-icon>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeScanner()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-icon style="font-size: 30px; font-weight: bolder;" routerLink="/home" slot="start" name="arrow-back-outline" class="animated fadeInRight"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-card class="animated zoomIn">
+<ion-content [fullscreen]="true" >
+  <ion-card id="container" class="animated zoomIn">
     <ion-card-header class="ion-text-center">
       <ion-card-title class="animated fadeInUp">Deliver Inventory to StoreRoom </ion-card-title>
     </ion-card-header>
@@ -16,7 +21,7 @@
       </ion-item>
       <ion-item class="animated fadeInRight">
         <ion-label position="floating">Barcode</ion-label>
-        <ion-input type="text" [(ngModel)]="barcode" *ngIf="toggleChecked"></ion-input>
+        <ion-input type="text" [(ngModel)]="barcode" (ionChange)="searchProductByBarcode()" *ngIf="toggleChecked"></ion-input>
         <ion-button expand="block" (click)="scanBarcode()" *ngIf="!toggleChecked" class="animated pulse infinite">
           <ion-icon name="barcode-outline"></ion-icon> Scan
         </ion-button>
