@@ -188,40 +188,61 @@ showCard() {
 
 
   async addItem() {
-
-    this.checkBookingDateTime(this.currentDate,this.currentTime);
-
-
+    this.checkBookingDateTime(this.currentDate, this.currentTime);
+  
     const loader = await this.loadingController.create({
       message: 'Adding Inventory...',
     });
     await loader.present();
-
+  
     try {
       if (this.imageBase64) {
         this.imageUrl = await this.uploadImage(this.imageBase64);
       }
-
-      const newItem = {
-        name: this.itemName,
-        category: this.itemCategory,
-        description: this.itemDescription,
-        imageUrl: this.imageUrl || '',
-        quantity: this.itemQuantity,
-        pickersDetails: this.pickersDetails,
-        dateOfPickup: this.dateOfPickup,
-        timeOfPickup: this.timeOfPickup,
-        barcode: this.barcode || '',
-        timestamp: new Date(),
-        location:"storeroom",
-        pickersDetailsEmail:this.pickersDetailsEmail,
-        phone :this.phone,
-        Cumpany:this.Cumpany
-      };
-      this.cart.push(newItem);
-      console.log(this.cart);
-      this.presentToast('Item added to cart','success');
-      await this.firestore.collection('storeroomInventory').add(newItem);
+  
+      // Check if a product with the same barcode already exists
+      const query = await this.firestore
+        .collection('storeroomInventory')
+        .ref.where('barcode', '==', this.barcode.trim())
+        .limit(1)
+        .get();
+  
+      if (!query.empty) {
+        // Product with the same barcode already exists, update its quantity
+        const docId = query.docs[0].id;
+        const existingProduct = query.docs[0].data() as { quantity?: number; imageUrl?: string };
+        const existingQuantity = existingProduct.quantity || 0;
+        const newQuantity = existingQuantity + this.itemQuantity;
+  
+        await this.firestore.collection('storeroomInventory').doc(docId).update({
+          quantity: newQuantity,
+          imageUrl: this.imageUrl || existingProduct.imageUrl || '', // Update imageUrl if a new one is provided
+        });
+        this.presentToast('Inventory item quantity updated', 'success');
+      } else {
+        // Product with the same barcode doesn't exist, create a new one
+        const newItem = {
+          name: this.itemName,
+          category: this.itemCategory,
+          description: this.itemDescription,
+          imageUrl: this.imageUrl || '',
+          quantity: this.itemQuantity,
+          pickersDetails: this.pickersDetails,
+          dateOfPickup: this.dateOfPickup,
+          timeOfPickup: this.timeOfPickup,
+          barcode: this.barcode || '',
+          timestamp: new Date(),
+          location: "storeroom",
+          pickersDetailsEmail: this.pickersDetailsEmail,
+          phone: this.phone,
+          Cumpany: this.Cumpany
+        };
+        this.cart.push(newItem);
+        console.log(this.cart);
+        this.presentToast('Item added to cart', 'success');
+        await this.firestore.collection('storeroomInventory').add(newItem);
+      }
+  
       this.clearFields();
     } catch (error) {
       console.error('Error adding inventory:', error);
