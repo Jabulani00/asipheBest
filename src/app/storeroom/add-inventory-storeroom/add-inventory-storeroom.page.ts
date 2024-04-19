@@ -7,6 +7,8 @@ import { AlertController, LoadingController, ToastController } from '@ionic/angu
 import { BarcodeScanner } from '@capacitor-community/barcode-scanner';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 const pdfMake = require('pdfmake/build/pdfmake.js');
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { FileOpener, FileOpenerOptions } from '@capacitor-community/file-opener';
 
 
 @Component({
@@ -73,44 +75,6 @@ export class AddInventoryStoreroomPage implements OnInit {
     const snapshot = await uploadTask;
     return snapshot.ref.getDownloadURL();
   }
-
-  async searchProductByBarcode() {
-    if (this.barcode.trim() === '') {
-      // If the barcode input is empty, clear other input fields
-      this.clearFieldsExceptBarcode();
-      return;
-    }
-  
-    // Search for the product with the entered barcode in Firestore
-    const querySnapshot = await this.firestore
-      .collection('storeroomInventory')
-      .ref.where('barcode', '==', this.barcode.trim())
-      .limit(1)
-      .get();
-  
-    if (!querySnapshot.empty) {
-      // If a product with the entered barcode is found, populate the input fields
-      const productData:any = querySnapshot.docs[0].data();
-      this.itemName = productData.name;
-      this.itemCategory = productData.category;
-      this.itemDescription = productData.description;
-      // You can similarly populate other input fields here
-    } else {
-      // If no product with the entered barcode is found, clear other input fields
-      this.clearFieldsExceptBarcode();
-      this.presentToast('Product not found', 'warning');
-    }
-  }
-  
-  clearFieldsExceptBarcode() {
-    // Clear all input fields except the barcode input
-    this.itemName = '';
-    this.itemCategory = '';
-    this.itemDescription = '';
-    // Clear other input fields here
-  }
-  
-
   hideCard() {
     const cardElement = document.getElementById('container');
     if (cardElement) {
@@ -182,67 +146,75 @@ showCard() {
     }
   }
   
-  
-  
 
 
 
   async addItem() {
-    this.checkBookingDateTime(this.currentDate, this.currentTime);
-  
+
+    this.checkBookingDateTime(this.currentDate,this.currentTime);
+
+
     const loader = await this.loadingController.create({
       message: 'Adding Inventory...',
     });
     await loader.present();
-  
+
     try {
       if (this.imageBase64) {
         this.imageUrl = await this.uploadImage(this.imageBase64);
       }
-  
-      // Check if a product with the same barcode already exists
-      const query = await this.firestore
-        .collection('storeroomInventory')
-        .ref.where('barcode', '==', this.barcode.trim())
-        .limit(1)
-        .get();
-  
-      if (!query.empty) {
-        // Product with the same barcode already exists, update its quantity
-        const docId = query.docs[0].id;
-        const existingProduct = query.docs[0].data() as { quantity?: number; imageUrl?: string };
-        const existingQuantity = existingProduct.quantity || 0;
-        const newQuantity = existingQuantity + this.itemQuantity;
-  
-        await this.firestore.collection('storeroomInventory').doc(docId).update({
-          quantity: newQuantity,
-          imageUrl: this.imageUrl || existingProduct.imageUrl || '', // Update imageUrl if a new one is provided
-        });
-        this.presentToast('Inventory item quantity updated', 'success');
-      } else {
-        // Product with the same barcode doesn't exist, create a new one
-        const newItem = {
+
+      const newItem = {
+        name: this.itemName,
+        category: this.itemCategory,
+        description: this.itemDescription,
+        imageUrl: this.imageUrl || '',
+        quantity: this.itemQuantity,
+        pickersDetails: this.pickersDetails,
+        dateOfPickup: this.dateOfPickup,
+        timeOfPickup: this.timeOfPickup,
+        barcode: this.barcode || '',
+        timestamp: new Date(),
+        location:"storeroom",
+        pickersDetailsEmail:this.pickersDetailsEmail,
+        phone :this.phone,
+        Cumpany:this.Cumpany
+      };
+
+
+
+      const querySnapshot = await this.firestore
+      .collection('storeroomInventory')
+      .ref.where('barcode', '==', this.barcode.trim())
+      .limit(1)
+      .get();
+
+
+      if (!querySnapshot.empty) {
+        // If a product with the entered barcode is found, populate the input fields
+        const productData:any = querySnapshot.docs[0].data();
+        const docId:any= querySnapshot.docs[0].id;
+        console.log(productData.quantity );
+      
+        this.firestore.collection('storeroomInventory').doc(docId).update({
           name: this.itemName,
           category: this.itemCategory,
           description: this.itemDescription,
           imageUrl: this.imageUrl || '',
-          quantity: this.itemQuantity,
-          pickersDetails: this.pickersDetails,
-          dateOfPickup: this.dateOfPickup,
-          timeOfPickup: this.timeOfPickup,
-          barcode: this.barcode || '',
-          timestamp: new Date(),
-          location: "storeroom",
-          pickersDetailsEmail: this.pickersDetailsEmail,
-          phone: this.phone,
-          Cumpany: this.Cumpany
-        };
-        this.cart.push(newItem);
-        console.log(this.cart);
-        this.presentToast('Item added to cart', 'success');
-        await this.firestore.collection('storeroomInventory').add(newItem);
-      }
-  
+          quantity: (productData.quantity + this.itemQuantity)
+         });
+ 
+        console.log("updated and added");
+        this.presentToast('Item added to cart','success');
+        this.clearFields();
+        return 
+        }
+
+
+      this.cart.push(newItem);
+      console.log(this.cart);
+      this.presentToast('Item added to cart','success');
+      await this.firestore.collection('storeroomInventory').add(newItem);
       this.clearFields();
     } catch (error) {
       console.error('Error adding inventory:', error);
@@ -252,13 +224,64 @@ showCard() {
     }
   }
 
+
+
+
+
+
+
+
+
+  async searchProductByBarcode() {
+    if (this.barcode.trim() === '') {
+      // If the barcode input is empty, clear other input fields
+      this.clearFieldsExceptBarcode();
+      return;
+    }
+  
+    // Search for the product with the entered barcode in Firestore
+    const querySnapshot = await this.firestore
+      .collection('storeroomInventory')
+      .ref.where('barcode', '==', this.barcode.trim())
+      .limit(1)
+      .get();
+  
+    if (!querySnapshot.empty) {
+      // If a product with the entered barcode is found, populate the input fields
+      const productData:any = querySnapshot.docs[0].data();
+      this.itemName = productData.name;
+      this.itemCategory = productData.category;
+      this.itemDescription = productData.description;
+      // You can similarly populate other input fields here
+    } else {
+      // If no product with the entered barcode is found, clear other input fields
+      this.clearFieldsExceptBarcode();
+      this.presentToast('Product not found', 'warning');
+    }
+  }
+  
+  clearFieldsExceptBarcode() {
+    // Clear all input fields except the barcode input
+    this.itemName = '';
+    this.itemCategory = '';
+    this.itemDescription = '';
+    // Clear other input fields here
+  }
+  
+
+
   async generateSlip() {
+    if(!this.cart.length){
+
+      return
+    }
     const loader = await this.loadingController.create({
       message: 'Generating Slip...',
     });
     await loader.present();
   console.log("data",this.cart)
     try {
+  
       // Create a slip document in Firestore
       const slipData = {
         date: new Date(),
@@ -273,109 +296,152 @@ showCard() {
           timeOfPickup: item.timeOfPickup,
           barcode: item.barcode,
           pickersDetailsEmail:this.pickersDetailsEmail,
-          phone :this.phone,
-          Cumpany:this.Cumpany
+//pickersDetailsPhone:this.pickersDetailsPhone,
+         
         })),
       };
-      await this.firestore.collection('slips').add(slipData);
+     // await this.firestore.collection('slips').add(slipData);
       pdfMake.vfs = pdfFonts.pdfMake.vfs;
      // Calculate column widths based on content length
 
 
 // Define PDF content
 // Define PDF content
-// Define PDF content
 const docDefinition = {
   content: [
+    {
+      text: 'BEST BRIGHT', // Adding the company name to the header
+      style: 'companyName'
+    },
+    {
+      text: 'INVOICE',
+      style: 'header'
+    },
+    {
+      text: `Date: ${new Date().toLocaleDateString()}`,
+      style: 'subheader'
+    },
+    // Iterate over each item in the cart and create a stylized layout
+    ...this.cart.flatMap((item, index) => [
       {
-          text: 'BEST BRIGHT', // Adding the company name to the header
-          style: 'companyName'
-      },
-      {
-          text: 'Invoice',
-          style: 'header'
-      },
-      {
-          text: `Date: ${new Date().toLocaleDateString()}`,
-          style: 'subheader'
-      },
-      {
-          table: {
-              headerRows: 1,
-              widths: [ 76, 76,76,76,76,76 ],
-              body: [
-                  [
-                      { text: 'Name', style: 'tableHeader' },
-                      { text: 'Category', style: 'tableHeader' },
-                      { text: 'Description', style: 'tableHeader' },
-                      { text: 'Quantity', style: 'tableHeader' },
-                      { text: 'Picker\'s Details', style: 'tableHeader' },
-                      { text: 'Barcode', style: 'tableHeader' }
-                  ],
-                  ...this.cart.map(item => [
-                      item.name,
-                      item.category,
-                      item.description,
-                      item.quantity.toString(),
-                      item.pickersDetails,
-                      item.barcode
-                  ])
-              ]
+        canvas: [
+          {
+            type: 'rect',
+            x: 0,
+            y: 0,
+            w: 515,
+            h: 30,
+            r: 3,
+            fillColor: index % 2 === 0 ? '#f2f2f2' : null, // Alternating row colors
+            lineWidth: 1,
+            lineColor: '#cccccc'
           }
+        ],
+        margin: [0, 10] // Add some margin between each item
+      },
+      {
+        columns: [
+          {
+            width: 'auto',
+            text: [
+              { text: 'Name: ', bold: true },
+              item.name,
+              '\n',
+              { text: 'Category: ', bold: true },
+              item.category,
+              '\n',
+              { text: 'Description: ', bold: true },
+              item.description,
+              '\n',
+              { text: 'Quantity: ', bold: true },
+              item.quantity.toString(),
+              '\n',
+              { text: 'Picker\'s Details: ', bold: true },
+              item.pickersDetails,
+              '\n',
+              { text: 'Barcode: ', bold: true },
+              item.barcode,
+            ]
+          }
+        ],
+        margin: [10, 10] // Adjust margin as needed
       }
+    ])
   ],
   styles: {
-      header: {
-          fontSize: 24,
-          bold: true,
-          margin: [0, 0, 0, 10],
-          alignment: 'center',
-          color: '#A393EB' // Blue color for the header
-      },
-      subheader: {
-          fontSize: 14,
-          bold: true,
-          margin: [0, 10, 0, 10]
-      },
-      tableHeader: {
-          bold: true,
-          fontSize: 12,
-          color: 'black',
-          alignment: 'center'
-      },
-      companyName: { // Style for the company name
-          fontSize: 28,
-          bold: true,
-          margin: [0, 0, 0, 20], // Adjust margin to separate company name from header
-          alignment: 'center',
-          color: '#A393EB' // Red color for the company name
-      }
+    header: {
+      fontSize: 28,
+      bold: true,
+      margin: [0, 0, 0, 10],
+      alignment: 'center',
+      color: '#664cdd', // Green color for the header
+    },
+    subheader: {
+      fontSize: 16,
+      bold: true,
+      margin: [0, 10, 0, 10],
+      alignment: 'center',
+    },
+    companyName: {
+      fontSize: 36,
+      bold: true,
+      margin: [0, 0, 0, 20],
+      alignment: 'center',
+      color: '#A393EB', // Deep orange color for the company name
+    }
   }
 };
 
 
 
 
-    // Generate PDF
-    //pdfMake.createPdf(docDefinition).open();
-    const pdfDocGenerator = await pdfMake.createPdf(docDefinition);
-      // Clear the cart after generating the slip
-      pdfDocGenerator.open();
-      this.cart = [];
-  
-      // Show success toast notification
-      this.presentToast('Slip generated successfully',"success");
-    } catch (error) {
-      console.error('Error generating slip:', error);
-      // Handle error
-    } finally {
-      loader.dismiss();
-    }
    
-    
+const pdfDoc =await pdfMake.createPdf(docDefinition).open();
+return
+// Generate the PDF as base64 data
+pdfDoc.getBase64(async (data:any) => {
+  // Save the PDF file locally on the device
+  try {
+    // Generate a random file name for the PDF
+  const fileName = `bestBrightness/${Date.now().toLocaleString}_storeroom.pdf.pdf`;
 
+    // Write the PDF data to the device's data directory
+   const result= await Filesystem.writeFile({
+      path: fileName,
+      data: data,
+      directory: Directory.Documents,
+      recursive:true
+    });
+   // await FileOpener.open(`${Result.uri}`,'application/pdf');
+    // Define options for opening the PDF file
+    const options: FileOpenerOptions = {
+      filePath: `${result.uri}`,
+      contentType: 'application/pdf', // Mime type of the file
+      openWithDefault: true, // Open with the default application
+    };
 
+    // Use FileOpener to open the PDF file
+
+    await FileOpener.open(options);
+    loader.dismiss();
+    this.cart=[];
+  } catch (error:any) {
+    loader.dismiss();
+    alert(error.message +"  "+error);
+    console.error('Error saving or opening PDF:', error);
+  }
+});
+
+alert('poccesing the slip...');
+} catch (error) {
+loader.dismiss();
+console.error('Error generating slip:', error);
+// Handle error
 }
+}
+
+
+
 
 clearFields() {
   this.itemName = '';
@@ -418,4 +484,7 @@ async presentToast(message: string,color:string) {
   });
   toast.present();
 }
+
+
+
 }

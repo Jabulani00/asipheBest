@@ -16,15 +16,15 @@
 
   <ion-grid>
     <ion-row>
-      <ion-col size="6" (click)="navigateToAddInventory()">
+      <ion-col size="6" routerLink="/add-inventory">
         <ion-card class="menu-card">
           <ion-card-header>
-            <ion-card-title>Add Inventory</ion-card-title>
+            <ion-card-title>Add to Store Inventory</ion-card-title>
             <ion-icon name="add-circle-outline"></ion-icon>
           </ion-card-header>
         </ion-card>
       </ion-col>
-      <ion-col size="6" (click)="navigateToUpdateInventory()">
+      <ion-col size="6" routerLink="/update">
         <ion-card class="menu-card">
           <ion-card-header>
             <ion-card-title>Update Inventory</ion-card-title>
@@ -35,7 +35,7 @@
     </ion-row>
 
     <ion-row>
-      <ion-col size="6" (click)="navigateToPickupInventory()">
+      <ion-col size="6" routerLink="/add-inventory-storeroom">
         <ion-card class="menu-card">
           <ion-card-header>
             <ion-card-title>Add Inventory Storeroom</ion-card-title>
@@ -43,7 +43,7 @@
           </ion-card-header>
         </ion-card>
       </ion-col>
-      <ion-col size="6" (click)="navigateToDeliverInventory()">
+      <ion-col size="6" routerLink="/analytics">
         <ion-card class="menu-card">
           <ion-card-header>
             <ion-card-title>Analytics</ion-card-title>
@@ -54,7 +54,7 @@
     </ion-row>
 
     <ion-row>
-      <ion-col size="6" (click)="navigateToStoreInventory()">
+      <ion-col size="6" routerLink="/view">
         <ion-card class="menu-card">
           <ion-card-header>
             <ion-card-title>Store</ion-card-title>
@@ -62,7 +62,7 @@
           </ion-card-header>
         </ion-card>
       </ion-col>
-      <ion-col size="6" (click)="navigateToViewStoreRoom()">
+      <ion-col size="6" routerLink="/storeroom">
         <ion-card class="menu-card">
           <ion-card-header>
             <ion-card-title>Storeroom</ion-card-title>
