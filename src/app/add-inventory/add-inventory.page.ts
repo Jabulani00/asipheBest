@@ -36,6 +36,7 @@ export class AddInventoryPage implements OnInit {
   qrCodeIdentifire: any;
   currentDate: Date;
   currentTime: string;
+  sizeProduct: string='';
 
   // Variable to hold the barcode value
   toggleChecked: boolean = false;
@@ -313,171 +314,151 @@ showCard() {
   }
 
   async generateSlip() {
-
-    if(!this.cart.length){
-
-      return
+    if (!this.cart.length) {
+        return;
     }
+
     const loader = await this.loadingController.create({
-      message: 'Generating Slip...',
+        message: 'Generating Slip...',
     });
     await loader.present();
-  console.log("data",this.cart)
+
     try {
-      // Create a slip document in Firestore
-      const slipData = {
-        date: new Date(),
-        items: this.cart.map(item => ({
-          name: item.name,
-          quantity: item.quantity,
-          category: item.category,
-          description: item.description,
-          imageUrl: item.imageUrl,
-          pickersDetails: item.pickersDetails,
-          dateOfPickup: item.dateOfPickup,
-          timeOfPickup: item.timeOfPickup,
-          barcode: item.barcode,
-        })),
-      };
-      await this.firestore.collection('slips').add(slipData);
-      pdfMake.vfs = pdfFonts.pdfMake.vfs;
-     // Calculate column widths based on content length
+        const slipData = {
+            date: new Date(),
+            items: this.cart.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                category: item.category,
+                description: item.description,
+                imageUrl: item.imageUrl,
+                pickersDetails: item.pickersDetails,
+                dateOfPickup: item.dateOfPickup,
+                timeOfPickup: item.timeOfPickup,
+                barcode: item.barcode,
+                sizeProduct: item.sizeProduct,
+            })),
+        };
 
+        pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-// Define PDF content
-// Define PDF content
-const docDefinition = {
-  content: [
-    {
-      text: 'BEST BRIGHT', // Adding the company name to the header
-      style: 'companyName'
-    },
-    {
-      text: 'INVOICE',
-      style: 'header'
-    },
-    {
-      text: `Date: ${new Date().toLocaleDateString()}`,
-      style: 'subheader'
-    },
-    // Iterate over each item in the cart and create a stylized layout
-    ...this.cart.flatMap((item, index) => [
-      {
-        canvas: [
-          {
-            type: 'rect',
-            x: 0,
-            y: 0,
-            w: 515,
-            h: 30,
-            r: 3,
-            fillColor: index % 2 === 0 ? '#f2f2f2' : null, // Alternating row colors
-            lineWidth: 1,
-            lineColor: '#cccccc'
-          }
-        ],
-        margin: [0, 10] // Add some margin between each item
-      },
-      {
-        columns: [
-          {
-            width: 'auto',
-            text: [
-              { text: 'Name: ', bold: true },
-              item.name,
-              '\n',
-              { text: 'Category: ', bold: true },
-              item.category,
-              '\n',
-              { text: 'Description: ', bold: true },
-              item.description,
-              '\n',
-              { text: 'Quantity: ', bold: true },
-              item.quantity.toString(),
-              '\n',
-              { text: 'Picker\'s Details: ', bold: true },
-              item.pickersDetails,
-              '\n',
-              { text: 'Barcode: ', bold: true },
-              item.barcode,
-            ]
-          }
-        ],
-        margin: [10, 10] // Adjust margin as needed
-      }
-    ])
-  ],
-  styles: {
-    header: {
-      fontSize: 28,
-      bold: true,
-      margin: [0, 0, 0, 10],
-      alignment: 'center',
-      color: '#664cdd', // Green color for the header
-    },
-    subheader: {
-      fontSize: 16,
-      bold: true,
-      margin: [0, 10, 0, 10],
-      alignment: 'center',
-    },
-    companyName: {
-      fontSize: 36,
-      bold: true,
-      margin: [0, 0, 0, 20],
-      alignment: 'center',
-      color: '#A393EB', // Deep orange color for the company name
+        const docDefinition = {
+            content: [
+                {
+                    text: 'BEST BRIGHT',
+                    style: 'companyName'
+                },
+                {
+                    text: 'SLIP',
+                    style: 'header'
+                },
+                {
+                    text: `Date: ${new Date().toLocaleDateString()}`,
+                    style: 'subheader'
+                },
+                ...this.cart.flatMap((item, index) => [
+                    {
+                        canvas: [
+                            {
+                                type: 'rect',
+                                x: 0,
+                                y: 0,
+                                w: 515,
+                                h: 30,
+                                r: 3,
+                                fillColor: index % 2 === 0 ? '#f2f2f2' : null,
+                                lineWidth: 1,
+                                lineColor: '#cccccc'
+                            }
+                        ],
+                        margin: [0, 10]
+                    },
+                    {
+                        columns: [
+                            {
+                                width: 'auto',
+                                text: [
+                                    { text: 'Name: ', bold: true },
+                                    item.name,
+                                    '\n',
+                                    { text: 'Category: ', bold: true },
+                                    item.category,
+                                    '\n',
+                                    { text: 'Description: ', bold: true },
+                                    item.description,
+                                    '\n',
+                                    { text: 'Quantity: ', bold: true },
+                                    item.quantity.toString(),
+                                    '\n',
+                                    { text: 'Size: ', bold: true },
+                                    item.sizeProduct,
+                                    '\n',
+                                    { text: 'Picker\'s Details: ', bold: true },
+                                    item.pickersDetails,
+                                    '\n',
+                                    { text: 'Barcode: ', bold: true },
+                                    item.barcode,
+                                ]
+                            }
+                        ],
+                        margin: [10, 10]
+                    }
+                ])
+            ],
+            styles: {
+                header: {
+                    fontSize: 28,
+                    bold: true,
+                    margin: [0, 0, 0, 10],
+                    alignment: 'center',
+                    color: '#664cdd',
+                },
+                subheader: {
+                    fontSize: 16,
+                    bold: true,
+                    margin: [0, 10, 0, 10],
+                    alignment: 'center',
+                },
+                companyName: {
+                    fontSize: 36,
+                    bold: true,
+                    margin: [0, 0, 0, 20],
+                    alignment: 'center',
+                    color: '#A393EB',
+                }
+            }
+        };
+
+        const pdfDoc = await pdfMake.createPdf(docDefinition).open();
+
+        pdfDoc.getBase64(async (data: string) => {
+            try {
+                const fileName = `bestBrightness/${Date.now().toLocaleString()}_storeroom.pdf`;
+                const result = await Filesystem.writeFile({
+                    path: fileName,
+                    data: data,
+                    directory: Directory.Documents,
+                    recursive: true
+                });
+
+                const options: FileOpenerOptions = {
+                    filePath: `${result.uri}`,
+                    contentType: 'application/pdf',
+                    openWithDefault: true,
+                };
+
+                await FileOpener.open(options);
+                loader.dismiss();
+                this.cart = [];
+            } catch (error) {
+                loader.dismiss();
+                console.error('Error saving or opening PDF:', error);
+            }
+        });
+    } catch (error) {
+        loader.dismiss();
+        console.error('Error generating slip:', error);
     }
-  }
-};
-
-
-
-
-
-const pdfDoc =await pdfMake.createPdf(docDefinition);
-
-// Generate the PDF as base64 data
-pdfDoc.getBase64(async (data:any) => {
-  // Save the PDF file locally on the device
-  try {
-    // Generate a random file name for the PDF
-  const fileName = `bestBrightness/${Date.now().toLocaleString}_store.pdf.pdf`;
-
-
-    // Write the PDF data to the device's data directory
-   const result= await Filesystem.writeFile({
-      path: fileName,
-      data: data,
-      directory: Directory.Documents,
-      recursive:true
-    });
-   // await FileOpener.open(`${Result.uri}`,'application/pdf');
-    // Define options for opening the PDF file
-    const options: FileOpenerOptions = {
-      filePath: `${result.uri}`,
-      contentType: 'application/pdf', // Mime type of the file
-      openWithDefault: true, // Open with the default application
-    };
-
-    // Use FileOpener to open the PDF file
-
-    await FileOpener.open(options);
-    loader.dismiss();
-    this.cart=[];
-  } catch (error:any) {
-    loader.dismiss();
-    alert(error.message +"  "+error);
-    console.error('Error saving or opening PDF:', error);
-  }
-});
-
-alert('done');
-} catch (error) {
-loader.dismiss();
-console.error('Error generating slip:', error);
-// Handle error
-}
 }
 
 
