@@ -345,11 +345,11 @@ showCard() {
         const docDefinition = {
             content: [
                 {
-                    text: 'BEST BRIGHT',
+                    text: 'BEST BRIGHTNESS',
                     style: 'companyName'
                 },
                 {
-                    text: 'SLIP',
+                    text: 'STORE UPDATE SLIP',
                     style: 'header'
                 },
                 {
@@ -429,7 +429,7 @@ showCard() {
             }
         };
 
-        const pdfDoc = await pdfMake.createPdf(docDefinition).open();
+        const pdfDoc = await pdfMake.createPdf(docDefinition);
 
         pdfDoc.getBase64(async (data: string) => {
             try {

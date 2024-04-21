@@ -73,55 +73,28 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    // Query Firestore to find the document with the matching email
-    const userQuerySnapshot = await firebase
-      .firestore()
-      .collection('Users')
-      .where('email', '==', this.email)
-      .get();
-
-    if (userQuerySnapshot.empty) {
-      loader.dismiss();
-      this.presentToast('User does not exist', 'danger');
-      return;
-    }
-
-    // Since email is unique, there should be only one document in the query snapshot
-    const userData = userQuerySnapshot.docs[0].data();
-
-    if (userData) {
-      if (userData['status'] === 'active') {
-        this.auth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then((userCredential) => {
-            loader.dismiss();
-            const user = userCredential.user;
-            this.router.navigate(['/home']);
-          })
-          .catch((error) => {
-            loader.dismiss();
-            const errorMessage = error.message;
-            if (errorMessage.includes('wrong-password')) {
-              this.presentToast('Incorrect password', 'danger');
-            } else {
-              this.presentToast(errorMessage, 'danger');
-            }
-          });
-      } else if (userData['status'] === 'denied') {
+    this.auth
+      .signInWithEmailAndPassword(this.email, this.password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+        if (user && user.emailVerified) {
+          // User email is verified, proceed with login
+          loader.dismiss();
+          this.router.navigate(['/home']);
+        } else {
+          // User email is not verified
+          loader.dismiss();
+          this.presentToast('Please verify your email address', 'danger');
+        }
+      })
+      .catch((error) => {
         loader.dismiss();
-        this.presentToast('You are not allowed in the system', 'danger');
-      } else if (userData['status'] === 'pending') {
-        loader.dismiss();
-        this.presentToast(
-          'Your account is pending. Please wait for admin approval.',
-          'warning'
-        );
-        // Redirect to profile page
-        this.router.navigate(['/profile']);
-      } else {
-        loader.dismiss();
-        this.presentToast('You are not allowed in the system', 'danger');
-      }
-    }
+        const errorMessage = error.message;
+        if (errorMessage.includes('wrong-password')) {
+          this.presentToast('Incorrect password', 'danger');
+        } else {
+          this.presentToast(errorMessage, 'danger');
+        }
+      });
   }
 }

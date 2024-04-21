@@ -16,13 +16,7 @@
       <ion-input type="email" [(ngModel)]="email"></ion-input>
     </ion-item>
 
-    <ion-item>
-      <ion-label>Select Role</ion-label>
-      <ion-select [(ngModel)]="selectedRole">
-        <ion-select-option value="Manager">Manager</ion-select-option>
-        <ion-select-option value="picker">Picker</ion-select-option> 
-      </ion-select>
-    </ion-item>
+
     
 
     <ion-item>
@@ -33,12 +27,12 @@
 
     <ion-item>
       <ion-label position="floating">Confirm Password</ion-label>
-      <ion-input type="password" [(ngModel)]="confirm_password"></ion-input>
+      <ion-input type="password" [(ngModel)]="confirmPassword"></ion-input>
     </ion-item>
   </ion-list>
 
   <div class="ion-padding">
-    <ion-button expand="block" (click)="Register()">Sign Up</ion-button>
+    <ion-button expand="block" (click)="register()">Sign Up</ion-button>
   </div>
 
   <p>Already have an account? <a routerLink="/login">sign-up</a></p>

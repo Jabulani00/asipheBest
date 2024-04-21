@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
 
 @Component({
   selector: 'app-sign-up',
@@ -10,93 +12,106 @@ import { LoadingController, ToastController } from '@ionic/angular';
   styleUrls: ['./sign-up.page.scss'],
 })
 export class SignUpPage implements OnInit {
-  name: any;
-  email: any;
-  password: any;
-  confirm_password: any;
-  selectedRole: any;
+  name: string = '';
+  email: string = '';
+  password: string = '';
+  confirmPassword: string = '';
 
   constructor(
-    private db: AngularFirestore,
-    private Auth: AngularFireAuth,
+    private afs: AngularFirestore,
+    private afAuth: AngularFireAuth,
     private router: Router,
-    private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {}
 
-  async presentToast(message: string, color: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 3000,
-      color: color,
-      position: 'top',
+  async register() {
+    if (this.password !== this.confirmPassword) {
+      await this.presentToast('Passwords do not match', 'danger');
+      return;
+    }
+
+    const loading = await this.loadingController.create({
+      message: 'Registering...',
     });
-    toast.present();
+    await loading.present();
+
+    try {
+      const userCredential: firebase.auth.UserCredential = await this.afAuth.createUserWithEmailAndPassword(
+        this.email,
+        this.password
+      );
+
+      if (userCredential.user) {
+        const userData = {
+          firstname: this.name,
+          email: this.email,
+        };
+        const userDocRef: AngularFirestoreDocument<any> = this.afs.doc(`Users/${userCredential.user.uid}`);
+        await userDocRef.set(userData);
+
+        await this.sendVerificationEmail(userCredential.user);
+        await this.router.navigate(['/login']);
+      } else {
+        throw new Error('User credential is missing');
+      }
+    } catch (error) {
+      await this.handleRegistrationError(error);
+    } finally {
+      loading.dismiss();
+    }
   }
 
-  async Register() {
-    if (this.name == '') {
-      this.presentToast('Please enter your full name', 'danger');
-      return;
+  async sendVerificationEmail(user: firebase.User) {
+    try {
+      await user.sendEmailVerification();
+      await this.presentToast('Verification email sent. Please check your inbox.', 'success');
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      await this.presentToast('Error sending verification email. Please try again.', 'danger');
+    }
+  }
+
+  private async handleRegistrationError(error: any) {
+    let errorMessage = 'Registration failed. Please try again.';
+    const errorCode = error.code;
+
+    switch (errorCode) {
+      case 'auth/email-already-in-use':
+        errorMessage = 'The email address is already in use by another account.';
+        break;
+      case 'auth/weak-password':
+        errorMessage = 'The password is too weak.';
+        break;
+      case 'auth/invalid-email':
+        errorMessage = 'The email address is not valid.';
+        break;
+      case 'auth/invalid-password':
+        errorMessage = 'The password is invalid.';
+        break;
+      case 'auth/user-not-found':
+        errorMessage = 'The user was not found.';
+        break;
+      case 'auth/wrong-password':
+        errorMessage = 'The password is incorrect.';
+        break;
+      default:
+        console.error('Registration error:', error);
+        break;
     }
 
-    if (this.email == '') {
-      this.presentToast('Please enter your email address', 'danger');
-      return;
-    }
+    await this.presentToast(errorMessage, 'danger');
+  }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(this.email)) {
-      this.presentToast('Please enter a valid email address', 'danger');
-      return;
-    }
-
-    if (this.password == '') {
-      this.presentToast('Please enter a password', 'danger');
-      return;
-    }
-
-    if (this.password !== this.confirm_password) {
-      this.presentToast('Passwords do not match', 'danger');
-      return;
-    }
-
-    const loader = await this.loadingController.create({
-      message: 'Registering you...',
-      cssClass: 'custom-loader-class'
+  private async presentToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'bottom',
     });
-    await loader.present();
-
-    this.Auth.createUserWithEmailAndPassword(this.email, this.password)
-      .then((userCredential: any) => {
-        if (userCredential.user) {
-          this.db
-            .collection('Users')
-            .add({
-              name: this.name,
-              email: this.email,
-              status: "pending",
-              role: this.selectedRole,
-            })
-            .then(() => {
-              loader.dismiss();
-              this.presentToast('User data added successfully', 'success');
-              this.router.navigate(['/profile']);
-            })
-            .catch((error: any) => {
-              loader.dismiss();
-              this.presentToast('Error adding user data: ' + error.message, 'danger');
-            });
-        } else {
-          loader.dismiss();
-          this.presentToast('User credential is missing', 'danger');
-        }
-      })
-      .catch((error: any) => {
-        loader.dismiss();
-        this.presentToast('Error creating user: ' + error.message, 'danger');
-      });
+    toast.present();
   }
 }
