@@ -130,6 +130,7 @@ showCard() {
       this.itemName = productData.name;
       this.itemCategory = productData.category;
       this.itemDescription = productData.description;
+      this.sizeProduct = productData.sizeProduct;
    
       // You can similarly populate other input fields here
     } else {
